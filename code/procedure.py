@@ -24,7 +24,15 @@ class MSELoss:
     def train_step(self, users, target_ratings):
         self.opt.zero_grad()
         
-        base_scores = self.model.base_adj[users]
+        # Handle both dense and sparse base adjacency
+        if hasattr(self.model, 'base_adj') and self.model.base_adj is not None:
+            base_scores = self.model.base_adj[users]
+        else:
+            # Use sparse matrix for large datasets
+            user_indices = users.cpu().numpy()
+            base_scores_np = self.model.base_adj_sparse[user_indices].toarray()
+            base_scores = torch.tensor(base_scores_np, dtype=torch.float32, device=self.model.device)
+        
         all_scores = []
         
         for name, eigen_data in self.model.eigendata.items():
@@ -35,9 +43,20 @@ class MSELoss:
             filter_matrix = eigenvecs @ torch.diag(filter_response) @ eigenvecs.t()
             
             if 'user_sim' in name:
-                user_embeddings = torch.eye(self.model.n_users, device=self.model.device)[users]
+                batch_size = len(users)
+                user_embeddings = torch.zeros(batch_size, self.model.n_users, device=self.model.device)
+                user_embeddings[range(batch_size), users] = 1.0
+                
                 filtered_users = user_embeddings @ filter_matrix
-                filtered_scores = filtered_users @ self.model.base_adj
+                
+                if hasattr(self.model, 'base_adj') and self.model.base_adj is not None:
+                    filtered_scores = filtered_users @ self.model.base_adj
+                else:
+                    # Use sparse matrix multiplication - detach for numpy conversion
+                    filtered_users_np = filtered_users.detach().cpu().numpy()
+                    filtered_scores_np = filtered_users_np @ self.model.base_adj_sparse.toarray()
+                    filtered_scores = torch.tensor(filtered_scores_np, dtype=torch.float32, 
+                                                 device=self.model.device, requires_grad=True)
             else:
                 filtered_scores = base_scores @ filter_matrix
             
