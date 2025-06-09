@@ -7,7 +7,6 @@ import torch.nn as nn
 import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import eigsh
-from sklearn.metrics.pairwise import cosine_similarity
 import time
 
 
@@ -32,41 +31,45 @@ class ChebyshevFilter(nn.Module):
         return torch.sigmoid(response)
 
 
-def create_similarity_adj(adj_mat, k_u=30, k_i=15, similarity_type='cosine'):
-    """Create similarity-based adjacency matrix"""
+def apply_symmetric_softmax_attention(similarity_matrix):
+    """Apply symmetric softmax attention normalization"""
+    if sp.issparse(similarity_matrix):
+        similarity_matrix = similarity_matrix.toarray()
+    
+    # Clip extreme values for numerical stability
+    similarity_matrix = np.clip(similarity_matrix, -10, 10)
+    
+    # Apply softmax row-wise
+    exp_sim = np.exp(similarity_matrix - np.max(similarity_matrix, axis=1, keepdims=True))
+    row_normalized = exp_sim / (np.sum(exp_sim, axis=1, keepdims=True) + 1e-8)
+    
+    # Apply softmax column-wise
+    exp_sim = np.exp(row_normalized - np.max(row_normalized, axis=0, keepdims=True))
+    col_normalized = exp_sim / (np.sum(exp_sim, axis=0, keepdims=True) + 1e-8)
+    
+    # Symmetric normalization: (row_norm + col_norm) / 2
+    symmetric_normalized = (row_normalized + col_normalized) / 2
+    
+    return symmetric_normalized
+
+
+def create_similarity_adj(adj_mat, k_u=30, k_i=15, use_attention=True):
+    """Create similarity-based adjacency matrix using matrix multiplication"""
     n_users, n_items = adj_mat.shape
     
-    # User-user similarity
-    if n_users < 5000:
-        user_sim = cosine_similarity(adj_mat, dense_output=False).toarray()
+    # User-user similarity: R @ R.T
+    if sp.issparse(adj_mat):
+        user_sim = (adj_mat @ adj_mat.T).toarray()
     else:
-        # Limit to most active users for large datasets
-        row_activity = np.array(adj_mat.sum(axis=1)).flatten()
-        top_users = min(3000, n_users)
-        top_indices = np.argsort(row_activity)[-top_users:]
-        limited_adj = adj_mat[top_indices]
-        limited_sim = cosine_similarity(limited_adj, dense_output=False).toarray()
-        # Pad back to original size
-        user_sim = np.zeros((n_users, n_users))
-        for i, idx in enumerate(top_indices):
-            user_sim[idx, top_indices] = limited_sim[i]
+        user_sim = adj_mat @ adj_mat.T
     
-    # Item-item similarity
-    if n_items < 5000:
-        item_sim = cosine_similarity(adj_mat.T, dense_output=False).toarray()
+    # Item-item similarity: R.T @ R
+    if sp.issparse(adj_mat):
+        item_sim = (adj_mat.T @ adj_mat).toarray()
     else:
-        # Limit to most active items
-        col_activity = np.array(adj_mat.sum(axis=0)).flatten()
-        top_items = min(3000, n_items)
-        top_indices = np.argsort(col_activity)[-top_items:]
-        limited_adj = adj_mat[:, top_indices].T
-        limited_sim = cosine_similarity(limited_adj, dense_output=False).toarray()
-        # Pad back to original size
-        item_sim = np.zeros((n_items, n_items))
-        for i, idx in enumerate(top_indices):
-            item_sim[idx, top_indices] = limited_sim[i]
+        item_sim = adj_mat.T @ adj_mat
     
-    # Apply top-k selection
+    # Apply top-k selection for users
     user_adj = np.zeros_like(user_sim)
     for i in range(n_users):
         similarities = user_sim[i].copy()
@@ -77,6 +80,11 @@ def create_similarity_adj(adj_mat, k_u=30, k_i=15, similarity_type='cosine'):
             if len(valid) > 0:
                 user_adj[i, valid] = similarities[valid]
     
+    # Apply attention mechanism if enabled
+    if use_attention and user_adj.sum() > 0:
+        user_adj = apply_symmetric_softmax_attention(user_adj)
+    
+    # Apply top-k selection for items
     item_adj = np.zeros_like(item_sim)
     for i in range(n_items):
         similarities = item_sim[i].copy()
@@ -87,7 +95,11 @@ def create_similarity_adj(adj_mat, k_u=30, k_i=15, similarity_type='cosine'):
             if len(valid) > 0:
                 item_adj[i, valid] = similarities[valid]
     
-    # Create block diagonal matrix
+    # Apply attention mechanism if enabled
+    if use_attention and item_adj.sum() > 0:
+        item_adj = apply_symmetric_softmax_attention(item_adj)
+    
+    # Create sparse matrices
     user_sparse = sp.csr_matrix(user_adj)
     item_sparse = sp.csr_matrix(item_adj)
     similarity_adj = sp.block_diag([user_sparse, item_sparse]).tocsr()
@@ -104,6 +116,7 @@ class DySimSpectralCF:
         # Parameters
         self.k_u = self.config.get('k_u', 30)
         self.k_i = self.config.get('k_i', 15)
+        self.use_attention = self.config.get('use_attention', True)
         self.n_eigen_user = self.config.get('n_eigen_user', 16)
         self.n_eigen_item = self.config.get('n_eigen_item', 32)
         self.filter_order = self.config.get('filter_order', 6)
@@ -133,8 +146,10 @@ class DySimSpectralCF:
     
     def train(self):
         """Train the model"""
-        # Create similarity matrices
-        similarity_adj, user_block, item_block = create_similarity_adj(self.adj_mat, self.k_u, self.k_i)
+        # Create similarity matrices using matrix multiplication
+        similarity_adj, user_block, item_block = create_similarity_adj(
+            self.adj_mat, self.k_u, self.k_i, self.use_attention
+        )
         
         # Add original gram matrices
         item_gram = self.adj_mat.T @ self.adj_mat
