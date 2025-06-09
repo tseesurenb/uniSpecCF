@@ -1,5 +1,5 @@
 '''
-Simplified Spectral CF and DySimSpectralCF Models
+Memory-Efficient DySimSpectralCF for Large Datasets
 '''
 
 import torch
@@ -7,359 +7,224 @@ import torch.nn as nn
 import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import eigsh
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfTransformer
 import time
 
 
-class ChebyshevFilter(nn.Module):
-    """Learnable Chebyshev spectral filter"""
-    
-    def __init__(self, filter_order=6, init_type='practical'):
-        super().__init__()
-        
-        # Initialize with practical values from theory
-        if init_type == 'practical':
-            # Good starting coefficients for collaborative filtering
-            init_coeffs = [1.0, -0.5, 0.1, -0.02, 0.004, -0.0008, 0.00015]
-        else:
-            # Zero initialization except first coefficient
-            init_coeffs = [1.0] + [0.0] * filter_order
-        
-        coeffs_data = torch.zeros(filter_order + 1)
-        for i, val in enumerate(init_coeffs[:filter_order + 1]):
-            coeffs_data[i] = val
-            
-        self.coeffs = nn.Parameter(coeffs_data)
-    
-    def forward(self, eigenvalues):
-        """Apply Chebyshev polynomial filter"""
-        # Map eigenvalues to [-1, 1] for Chebyshev polynomials
-        lambda_max = torch.max(eigenvalues)
-        lambda_min = torch.min(eigenvalues)
-        
-        if lambda_max > lambda_min:
-            scaled_eigen = 2.0 * (eigenvalues - lambda_min) / (lambda_max - lambda_min) - 1.0
-        else:
-            scaled_eigen = torch.zeros_like(eigenvalues)
-        
-        # Compute Chebyshev polynomials T_k(x)
-        result = self.coeffs[0] * torch.ones_like(scaled_eigen)
-        
-        if len(self.coeffs) > 1:
-            T_prev = torch.ones_like(scaled_eigen)  # T_0(x) = 1
-            T_curr = scaled_eigen.clone()           # T_1(x) = x
-            result += self.coeffs[1] * T_curr
-            
-            for k in range(2, len(self.coeffs)):
-                T_next = 2.0 * scaled_eigen * T_curr - T_prev  # T_{k+1}(x) = 2xT_k(x) - T_{k-1}(x)
-                result += self.coeffs[k] * T_next
-                T_prev, T_curr = T_curr, T_next
-        
-        return torch.sigmoid(result) + 1e-6
-
-
-def create_polycf_adjacency_views(adj_mat, gamma_values=None):
+def compute_similarity_matrix_efficient(matrix, similarity_type='cosine', max_users=None, max_items=None):
     """
-    Create multiple adjacency views with different normalization parameters γ
-    Following PolyCF approach: R_γ = D_r^(-γ) R D_c^(-(1-γ))
+    Memory-efficient similarity computation using sparse operations and chunking
     """
-    if gamma_values is None:
-        gamma_values = [0.0, 0.5, 1.0]  # Raw, Symmetric, Row-normalized
+    if sp.issparse(matrix):
+        matrix = matrix.tocsr()
     
-    adjacency_views = {}
+    n_rows = matrix.shape[0]
     
-    # Compute degree matrices
-    row_degrees = np.array(adj_mat.sum(axis=1)).flatten()
-    col_degrees = np.array(adj_mat.sum(axis=0)).flatten()
+    # For very large datasets, limit the size
+    if max_users is not None and n_rows > max_users:
+        print(f"Limiting similarity computation to top {max_users} most active users/items")
+        # Get row activity (number of interactions)
+        row_activity = np.array(matrix.sum(axis=1)).flatten()
+        top_indices = np.argsort(row_activity)[-max_users:]
+        matrix = matrix[top_indices]
+        n_rows = max_users
     
-    # Add small epsilon to avoid division by zero
-    row_degrees = row_degrees + 1e-8
-    col_degrees = col_degrees + 1e-8
-    
-    for gamma in gamma_values:
-        # Compute D_r^(-γ) and D_c^(-(1-γ))
-        d_row_power = np.power(row_degrees, -gamma)
-        d_col_power = np.power(col_degrees, -(1-gamma))
-        
-        # Handle infinite values
-        d_row_power[np.isinf(d_row_power)] = 0.
-        d_col_power[np.isinf(d_col_power)] = 0.
-        
-        # Create diagonal matrices
-        d_row_diag = sp.diags(d_row_power)
-        d_col_diag = sp.diags(d_col_power)
-        
-        # Create normalized adjacency: R_γ = D_r^(-γ) R D_c^(-(1-γ))
-        norm_adj = d_row_diag @ adj_mat @ d_col_diag
-        
-        # Name the view based on gamma value
-        if gamma == 0.0:
-            name = "raw"  # Column normalized only
-        elif gamma == 0.5:
-            name = "symmetric"  # Symmetric normalization
-        elif gamma == 1.0:
-            name = "row_norm"  # Row normalized only
-        else:
-            name = f"gamma_{gamma:.1f}"
-        
-        adjacency_views[name] = norm_adj
-    
-    return adjacency_views
-
-
-def compute_similarity_matrix(matrix, similarity_type='cosine'):
-    """
-    Compute similarity matrix using cosine or jaccard similarity
-    Following DySimGCF approach
-    """
     if similarity_type == 'cosine':
-        # Cosine similarity: dot product of normalized vectors
-        norm_matrix = matrix / (np.linalg.norm(matrix, axis=1, keepdims=True) + 1e-8)
-        similarity = norm_matrix @ norm_matrix.T
+        print(f"Computing cosine similarity for {n_rows} entities...")
+        
+        # Use sklearn's efficient cosine similarity for sparse matrices
+        similarity = cosine_similarity(matrix, dense_output=False)
+        
+        # Convert to dense only if small enough
+        if n_rows < 5000:
+            similarity = similarity.toarray()
+        
     elif similarity_type == 'jaccard':
-        # Jaccard similarity: intersection over union for binary data
-        matrix_bool = (matrix > 0).astype(float)
-        intersection = matrix_bool @ matrix_bool.T
-        sum_matrix = np.sum(matrix_bool, axis=1, keepdims=True)
-        union = sum_matrix + sum_matrix.T - intersection
-        similarity = intersection / (union + 1e-8)
-    else:
-        raise ValueError(f"Unknown similarity type: {similarity_type}")
+        print(f"Computing Jaccard similarity for {n_rows} entities...")
+        
+        # Binarize the matrix
+        matrix_bool = (matrix > 0).astype(np.float32)
+        
+        if n_rows < 5000:
+            # Dense computation for small matrices
+            intersection = matrix_bool @ matrix_bool.T
+            sum_matrix = np.array(matrix_bool.sum(axis=1)).flatten()
+            union = sum_matrix[:, None] + sum_matrix[None, :] - intersection
+            union[union == 0] = 1e-8
+            similarity = intersection / union
+        else:
+            # Sparse computation for large matrices
+            intersection = matrix_bool @ matrix_bool.T
+            sum_matrix = np.array(matrix_bool.sum(axis=1)).flatten()
+            # Convert to dense for union computation (still memory-efficient)
+            if sp.issparse(intersection):
+                intersection = intersection.toarray()
+            union = sum_matrix[:, None] + sum_matrix[None, :] - intersection
+            union[union == 0] = 1e-8
+            similarity = intersection / union
     
     return similarity
 
 
-def create_similarity_based_adjacency(adj_mat, k_u=50, k_i=20, similarity_type='cosine'):
+def create_similarity_based_adjacency_efficient(adj_mat, k_u=50, k_i=20, similarity_type='cosine', 
+                                               max_users=10000, max_items=10000):
     """
-    Create similarity-based adjacency matrix following DySimGCF approach
+    Memory-efficient similarity-based adjacency matrix creation
     """
     n_users, n_items = adj_mat.shape
+    print(f"Dataset size: {n_users:,} users × {n_items:,} items")
     
-    # Convert to dense if sparse for similarity computation
-    if sp.issparse(adj_mat):
-        adj_dense = adj_mat.toarray()
-    else:
-        adj_dense = adj_mat
+    # Memory check: if too large, reduce k values
+    if n_users > 20000:
+        k_u = min(k_u, 30)
+        print(f"Large dataset detected, reducing k_u to {k_u}")
+    if n_items > 30000:
+        k_i = min(k_i, 15)
+        print(f"Large dataset detected, reducing k_i to {k_i}")
     
-    # Compute user-user similarity from interaction patterns
-    user_sim_matrix = compute_similarity_matrix(adj_dense, similarity_type)
+    # Compute user-user similarity (limit to most active users if needed)
+    print("Computing user-user similarities...")
+    user_sim_matrix = compute_similarity_matrix_efficient(
+        adj_mat, similarity_type, max_users=max_users if n_users > max_users else None
+    )
     
-    # Compute item-item similarity from interaction patterns  
-    item_sim_matrix = compute_similarity_matrix(adj_dense.T, similarity_type)
+    # Compute item-item similarity (limit to most active items if needed)
+    print("Computing item-item similarities...")
+    item_sim_matrix = compute_similarity_matrix_efficient(
+        adj_mat.T, similarity_type, max_items=max_items if n_items > max_items else None
+    )
+    
+    # Adjust matrix sizes if we limited users/items
+    actual_n_users = user_sim_matrix.shape[0]
+    actual_n_items = item_sim_matrix.shape[0]
+    
+    print(f"Actual similarity matrix sizes: {actual_n_users} users, {actual_n_items} items")
     
     # Apply top-k selection for users
+    print(f"Applying top-{k_u} selection for users...")
     user_adj = np.zeros_like(user_sim_matrix)
-    for i in range(n_users):
-        # Get top-k similar users (excluding self)
-        similarities = user_sim_matrix[i].copy()
+    
+    for i in range(actual_n_users):
+        if sp.issparse(user_sim_matrix):
+            similarities = user_sim_matrix[i].toarray().flatten()
+        else:
+            similarities = user_sim_matrix[i].copy()
+        
         similarities[i] = -1  # Exclude self
-        if k_u > 0:
-            top_k_indices = np.argsort(similarities)[-min(k_u, len(similarities)-1):]
-            user_adj[i, top_k_indices] = similarities[top_k_indices]
+        
+        if k_u > 0 and k_u < actual_n_users:
+            top_k_indices = np.argsort(similarities)[-k_u:]
+            valid_indices = top_k_indices[similarities[top_k_indices] > 0]
+            if len(valid_indices) > 0:
+                user_adj[i, valid_indices] = similarities[valid_indices]
     
     # Apply top-k selection for items
+    print(f"Applying top-{k_i} selection for items...")
     item_adj = np.zeros_like(item_sim_matrix)
-    for i in range(n_items):
-        # Get top-k similar items (excluding self)
-        similarities = item_sim_matrix[i].copy()
-        similarities[i] = -1  # Exclude self
-        if k_i > 0:
-            top_k_indices = np.argsort(similarities)[-min(k_i, len(similarities)-1):]
-            item_adj[i, top_k_indices] = similarities[top_k_indices]
     
-    # Create block adjacency matrix: [user_adj, 0; 0, item_adj]
-    similarity_adj = sp.block_diag([sp.csr_matrix(user_adj), sp.csr_matrix(item_adj)])
+    for i in range(actual_n_items):
+        if sp.issparse(item_sim_matrix):
+            similarities = item_sim_matrix[i].toarray().flatten()
+        else:
+            similarities = item_sim_matrix[i].copy()
+        
+        similarities[i] = -1  # Exclude self
+        
+        if k_i > 0 and k_i < actual_n_items:
+            top_k_indices = np.argsort(similarities)[-k_i:]
+            valid_indices = top_k_indices[similarities[top_k_indices] > 0]
+            if len(valid_indices) > 0:
+                item_adj[i, valid_indices] = similarities[valid_indices]
+    
+    # Create sparse block diagonal matrix
+    user_adj_sparse = sp.csr_matrix(user_adj)
+    item_adj_sparse = sp.csr_matrix(item_adj)
+    
+    # If we limited the matrix sizes, we need to pad them back
+    if actual_n_users < n_users or actual_n_items < n_items:
+        print("Padding similarity matrices to original size...")
+        
+        # Pad user matrix
+        if actual_n_users < n_users:
+            pad_users = n_users - actual_n_users
+            user_pad = sp.csr_matrix((pad_users, actual_n_users))
+            bottom_pad = sp.csr_matrix((n_users, pad_users))
+            user_adj_sparse = sp.vstack([user_adj_sparse, user_pad])
+            user_adj_sparse = sp.hstack([user_adj_sparse, bottom_pad])
+        
+        # Pad item matrix
+        if actual_n_items < n_items:
+            pad_items = n_items - actual_n_items
+            item_pad = sp.csr_matrix((pad_items, actual_n_items))
+            bottom_pad = sp.csr_matrix((n_items, pad_items))
+            item_adj_sparse = sp.vstack([item_adj_sparse, item_pad])
+            item_adj_sparse = sp.hstack([item_adj_sparse, bottom_pad])
+    
+    similarity_adj = sp.block_diag([user_adj_sparse, item_adj_sparse])
+    
+    print(f"Created similarity adjacency matrix: {similarity_adj.shape}")
+    print(f"User block edges: {user_adj_sparse.nnz:,}, Item block edges: {item_adj_sparse.nnz:,}")
     
     return similarity_adj, user_sim_matrix, item_sim_matrix
 
 
-def apply_symmetric_softmax_attention(similarity_matrix):
+def apply_symmetric_softmax_attention_efficient(similarity_matrix):
     """
-    Apply symmetric softmax normalization as in DySimGCF
+    Memory-efficient attention mechanism for large sparse matrices
     """
-    # Convert to dense if sparse
-    if sp.issparse(similarity_matrix):
-        sim_dense = similarity_matrix.toarray()
-    else:
-        sim_dense = similarity_matrix.copy()
+    if not sp.issparse(similarity_matrix):
+        # For small dense matrices, use original method
+        return apply_symmetric_softmax_attention(similarity_matrix)
     
-    # Avoid numerical issues
-    sim_dense = np.clip(sim_dense, -10, 10)
+    print("Applying efficient attention mechanism...")
     
-    # Apply softmax normalization
-    exp_sim = np.exp(sim_dense - np.max(sim_dense, axis=1, keepdims=True))
+    # Work with sparse matrix directly
+    similarity_matrix = similarity_matrix.tocsr()
     
-    # Symmetric normalization: geometric mean of row and column normalization
-    row_sums = np.sum(exp_sim, axis=1, keepdims=True) + 1e-8
-    col_sums = np.sum(exp_sim, axis=0, keepdims=True) + 1e-8
+    # Apply attention only to non-zero elements
+    data = similarity_matrix.data.copy()
     
-    # Geometric mean normalization
-    normalized = exp_sim / np.sqrt(row_sums * col_sums)
+    # Clip extreme values
+    data = np.clip(data, -10, 10)
     
-    return sp.csr_matrix(normalized)
+    # Apply softmax to non-zero elements only
+    data = np.exp(data - np.max(data))
+    
+    # Create new sparse matrix with attention-weighted values
+    attended_matrix = sp.csr_matrix(
+        (data, similarity_matrix.indices, similarity_matrix.indptr),
+        shape=similarity_matrix.shape
+    )
+    
+    # Row normalization
+    row_sums = np.array(attended_matrix.sum(axis=1)).flatten()
+    row_sums[row_sums == 0] = 1e-8
+    row_diag = sp.diags(1.0 / np.sqrt(row_sums))
+    
+    # Column normalization
+    col_sums = np.array(attended_matrix.sum(axis=0)).flatten()
+    col_sums[col_sums == 0] = 1e-8
+    col_diag = sp.diags(1.0 / np.sqrt(col_sums))
+    
+    # Apply symmetric normalization
+    normalized_matrix = row_diag @ attended_matrix @ col_diag
+    
+    return normalized_matrix
 
 
-class SimplifiedSpectralCF(object):
-    """Simplified Spectral CF with PolyCF-style Multi-view Normalization"""
+class DySimSpectralCF_Efficient(object):
+    """Memory-Efficient DySimSpectralCF for Large Datasets"""
     
     def __init__(self, adj_mat, config=None):
         self.adj_mat = adj_mat.astype(np.float32) if sp.issparse(adj_mat) else adj_mat
         self.config = config or {}
         self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
         
-        # Model parameters
-        self.use_full_eigen = self.config.get('use_full_eigen', True)
-        self.n_eigen_item = self.config.get('n_eigen_item', 128)
-        self.n_eigen_user = self.config.get('n_eigen_user', 128)
-        self.filter_order = self.config.get('filter_order', 6)
-        self.use_user_gram = self.config.get('use_user_gram', True)
-        self.use_item_gram = self.config.get('use_item_gram', True)
-        
-        # PolyCF-style gamma values for different adjacency views
-        self.gamma_values = self.config.get('gamma_values', [0.0, 0.5, 1.0])
-        
-        self.n_users, self.n_items = self.adj_mat.shape
-        
-        print(f"SimplifiedSpectralCF: {self.n_users:,} users, {self.n_items:,} items")
-        print(f"User gram: {self.use_user_gram}, Item gram: {self.use_item_gram}")
-        print(f"Gamma values: {self.gamma_values}")
-    
-    def _compute_eigendecomposition(self, gram_matrix, matrix_type='item'):
-        """Compute eigendecomposition for a gram matrix"""
-        if self.use_full_eigen:
-            try:
-                eigenvals, eigenvecs = eigsh(gram_matrix, k=self.n_items-2, which='LM')
-                eigenvals = np.maximum(eigenvals, 0.0)
-                n_eigen = len(eigenvals)
-                method = "Full eigenspace (sparse)"
-            except:
-                try:
-                    gram_dense = gram_matrix.toarray() if sp.issparse(gram_matrix) else gram_matrix
-                    eigenvals, eigenvecs = np.linalg.eigh(gram_dense)
-                    idx = np.argsort(eigenvals)[::-1]
-                    eigenvals = eigenvals[idx]
-                    eigenvecs = eigenvecs[:, idx]
-                    eigenvals = np.maximum(eigenvals, 0.0)
-                    n_eigen = len(eigenvals)
-                    method = "Full eigenspace (dense)"
-                except:
-                    k = min(128, self.n_items - 2)
-                    eigenvals = np.linspace(0.1, 1.0, k)
-                    eigenvecs = np.eye(self.n_items, k)
-                    n_eigen = k
-                    method = "Fallback"
-        else:
-            if matrix_type == 'item':
-                k = min(self.n_eigen_item, self.n_items - 2)
-            else:
-                k = min(self.n_eigen_user, self.n_items - 2)
-            
-            try:
-                eigenvals, eigenvecs = eigsh(gram_matrix, k=k, which='LM')
-                eigenvals = np.maximum(eigenvals, 0.0)
-                n_eigen = k
-                method = f"Truncated ({k})"
-            except:
-                eigenvals = np.linspace(0.1, 1.0, k)
-                eigenvecs = np.eye(self.n_items, k)
-                n_eigen = k
-                method = f"Fallback ({k})"
-        
-        return eigenvals, eigenvecs, n_eigen, method
-    
-    def train(self):
-        """Training: create multiple adjacency views, compute gram matrices"""
-        start = time.time()
-        
-        print(f"Creating {len(self.gamma_values)} adjacency views...")
-        adjacency_views = create_polycf_adjacency_views(self.adj_mat, self.gamma_values)
-        
-        self.gram_matrices = {}
-        
-        # For each adjacency view, create gram matrices
-        for view_name, norm_adj in adjacency_views.items():
-            if self.use_item_gram:
-                item_gram = norm_adj.T @ norm_adj
-                key = f'item_gram_{view_name}'
-                self.gram_matrices[key] = item_gram
-            
-            if self.use_user_gram:
-                user_gram = norm_adj @ norm_adj.T
-                projected_user_gram = norm_adj.T @ user_gram @ norm_adj
-                key = f'user_gram_{view_name}'
-                self.gram_matrices[key] = projected_user_gram
-        
-        print(f"Created {len(self.gram_matrices)} gram matrices")
-        
-        # Compute eigendecompositions
-        self.eigendata = {}
-        self.filters = {}
-        
-        for name, gram_matrix in self.gram_matrices.items():
-            matrix_type = 'item' if 'item_gram' in name else 'user'
-            eigenvals, eigenvecs, n_eigen, method = self._compute_eigendecomposition(gram_matrix, matrix_type)
-            
-            print(f"  {name}: {method} ({n_eigen} eigenvalues)")
-            
-            self.eigendata[name] = {
-                'eigenvals': torch.tensor(eigenvals, dtype=torch.float32, device=self.device),
-                'eigenvecs': torch.tensor(eigenvecs, dtype=torch.float32, device=self.device)
-            }
-            
-            self.filters[name] = ChebyshevFilter(self.filter_order).to(self.device)
-        
-        # Combination weights
-        n_matrices = len(self.gram_matrices)
-        self.combination_weights = nn.Parameter(torch.ones(n_matrices, device=self.device))
-        
-        # Use symmetric view for predictions
-        if 'symmetric' in adjacency_views:
-            prediction_adj = adjacency_views['symmetric']
-        else:
-            prediction_adj = list(adjacency_views.values())[0]
-        
-        self.norm_adj = torch.tensor(prediction_adj.toarray(), dtype=torch.float32, device=self.device)
-        
-        print(f'SimplifiedSpectralCF training completed in {time.time() - start:.2f}s')
-    
-    def getUsersRating(self, batch_users, ds_name=None):
-        """Get user ratings using multi-view spectral filtering"""
-        if isinstance(batch_users, np.ndarray):
-            batch_users = torch.LongTensor(batch_users).to(self.device)
-        
-        base_scores = self.norm_adj[batch_users]
-        all_filtered_scores = []
-        
-        for name, eigen_data in self.eigendata.items():
-            eigenvals = eigen_data['eigenvals']
-            eigenvecs = eigen_data['eigenvecs']
-            
-            filter_response = self.filters[name](eigenvals)
-            filter_matrix = eigenvecs @ torch.diag(filter_response) @ eigenvecs.t()
-            
-            filtered_scores = base_scores @ filter_matrix
-            all_filtered_scores.append(filtered_scores)
-        
-        if len(all_filtered_scores) > 1:
-            weights = torch.softmax(self.combination_weights, dim=0)
-            predicted = sum(w * s for w, s in zip(weights, all_filtered_scores))
-        else:
-            predicted = all_filtered_scores[0]
-        
-        return predicted.detach().cpu().numpy()
-
-
-class DySimSpectralCF(object):
-    """DySimSpectralCF: Similarity-Centric Spectral Collaborative Filtering"""
-    
-    def __init__(self, adj_mat, config=None):
-        self.adj_mat = adj_mat.astype(np.float32) if sp.issparse(adj_mat) else adj_mat
-        self.config = config or {}
-        self.device = self.config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
-        
-        # Model parameters
-        self.use_full_eigen = self.config.get('use_full_eigen', True)
-        self.n_eigen_item = self.config.get('n_eigen_item', 128)
-        self.n_eigen_user = self.config.get('n_eigen_user', 128)
+        # Model parameters - more conservative for large datasets
+        self.use_full_eigen = self.config.get('use_full_eigen', False)  # Always False for large datasets
+        self.n_eigen_item = self.config.get('n_eigen_item', 32)  # Reduced
+        self.n_eigen_user = self.config.get('n_eigen_user', 16)  # Reduced
         self.filter_order = self.config.get('filter_order', 6)
         
         # DySimGCF parameters
@@ -373,111 +238,96 @@ class DySimSpectralCF(object):
         self.use_item_similarity = self.config.get('use_item_similarity', True)
         self.use_original_interactions = self.config.get('use_original_interactions', True)
         
+        # Memory efficiency parameters
+        self.max_users_similarity = self.config.get('max_users_similarity', 10000)
+        self.max_items_similarity = self.config.get('max_items_similarity', 10000)
+        
         self.n_users, self.n_items = self.adj_mat.shape
         
-        print(f"DySimSpectralCF: {self.n_users:,} users, {self.n_items:,} items")
+        print(f"DySimSpectralCF_Efficient: {self.n_users:,} users, {self.n_items:,} items")
         print(f"Similarity: {self.similarity_type}, Top-k: users={self.k_u}, items={self.k_i}")
-        print(f"Attention: {self.use_attention}")
+        print(f"Memory limits: users={self.max_users_similarity:,}, items={self.max_items_similarity:,}")
     
-    def _compute_eigendecomposition(self, similarity_matrix, matrix_type='similarity'):
-        """Compute eigendecomposition for similarity-based matrix"""
-        max_size = similarity_matrix.shape[0]
+    def _compute_eigendecomposition_efficient(self, matrix, matrix_type='similarity'):
+        """Efficient eigendecomposition for large sparse matrices"""
+        max_size = matrix.shape[0]
         
-        if self.use_full_eigen:
-            try:
-                eigenvals, eigenvecs = eigsh(similarity_matrix, k=max_size-2, which='LM')
-                eigenvals = np.maximum(eigenvals, 0.0)
-                method = "Full eigenspace"
-            except:
-                try:
-                    sim_dense = similarity_matrix.toarray() if sp.issparse(similarity_matrix) else similarity_matrix
-                    eigenvals, eigenvecs = np.linalg.eigh(sim_dense)
-                    idx = np.argsort(eigenvals)[::-1]
-                    eigenvals = eigenvals[idx]
-                    eigenvecs = eigenvecs[:, idx]
-                    eigenvals = np.maximum(eigenvals, 0.0)
-                    method = "Full eigenspace (dense)"
-                except:
-                    k = min(64, max_size - 2)
-                    eigenvals = np.linspace(0.1, 1.0, k)
-                    eigenvecs = np.eye(max_size, k)
-                    method = "Fallback"
+        # Always use truncated eigenspace for large matrices
+        if matrix_type == 'user':
+            k = min(self.n_eigen_user, max_size - 5, 50)  # Cap at 50
+        elif matrix_type == 'item':
+            k = min(self.n_eigen_item, max_size - 5, 100)  # Cap at 100
         else:
-            if matrix_type == 'user':
-                k = min(self.n_eigen_user, max_size - 2)
-            elif matrix_type == 'item':
-                k = min(self.n_eigen_item, max_size - 2)
-            else:
-                k = min(64, max_size - 2)
+            k = min(32, max_size - 5)
+        
+        try:
+            # Ensure matrix is sparse and symmetric
+            if not sp.issparse(matrix):
+                matrix = sp.csr_matrix(matrix)
             
-            try:
-                eigenvals, eigenvecs = eigsh(similarity_matrix, k=k, which='LM')
-                eigenvals = np.maximum(eigenvals, 0.0)
-                method = f"Truncated ({k})"
-            except:
-                eigenvals = np.linspace(0.1, 1.0, k)
-                eigenvecs = np.eye(max_size, k)
-                method = f"Fallback ({k})"
+            # Make symmetric for stability
+            matrix = (matrix + matrix.T) / 2
+            
+            # Add small diagonal term for numerical stability
+            matrix += sp.diags(1e-6 * np.ones(max_size))
+            
+            print(f"Computing {k} eigenvalues for {matrix_type} matrix ({max_size}×{max_size})...")
+            eigenvals, eigenvecs = eigsh(matrix, k=k, which='LM', maxiter=1000, tol=1e-6)
+            eigenvals = np.maximum(eigenvals, 0.0)
+            method = f"Efficient truncated ({k})"
+            
+        except Exception as e:
+            print(f"Eigendecomposition failed ({e}), using fallback")
+            k = min(16, max_size - 2)
+            eigenvals = np.linspace(0.1, 1.0, k)
+            eigenvecs = np.random.randn(max_size, k)
+            eigenvecs, _ = np.linalg.qr(eigenvecs)  # Orthogonalize
+            method = f"Random fallback ({k})"
         
         return eigenvals, eigenvecs, len(eigenvals), method
     
     def train(self):
-        """Training: create similarity-based graphs, compute eigendecomposition and setup filters"""
+        """Memory-efficient training for large datasets"""
         start = time.time()
         
-        print("Creating similarity-based adjacency matrices...")
+        print("Creating similarity-based adjacency matrices (memory-efficient)...")
         
-        # Step 1: Create similarity-based adjacency matrix (DySimGCF approach)
-        similarity_adj, user_sim_matrix, item_sim_matrix = create_similarity_based_adjacency(
-            self.adj_mat, self.k_u, self.k_i, self.similarity_type
+        # Create similarity-based adjacency matrix with memory limits
+        similarity_adj, user_sim_matrix, item_sim_matrix = create_similarity_based_adjacency_efficient(
+            self.adj_mat, self.k_u, self.k_i, self.similarity_type,
+            self.max_users_similarity, self.max_items_similarity
         )
         
-        # Step 2: Apply attention mechanism if enabled
+        # Apply attention mechanism if enabled
         if self.use_attention:
-            print("Applying symmetric softmax attention...")
+            print("Applying efficient attention mechanism...")
             try:
-                similarity_adj = apply_symmetric_softmax_attention(similarity_adj)
+                similarity_adj = apply_symmetric_softmax_attention_efficient(similarity_adj)
             except Exception as e:
-                print(f"Warning: Attention mechanism failed ({e}), using raw similarities")
-                # Continue without attention if it fails
-        else:
-            print("Skipping attention mechanism (disabled)")
+                print(f"Attention failed ({e}), continuing without attention")
         
-        # Step 3: Store different similarity matrices for spectral analysis
+        # Store similarity matrices
         self.similarity_matrices = {}
         
         if self.use_user_similarity:
-            # User similarity submatrix
             user_block = similarity_adj[:self.n_users, :self.n_users]
-            # Ensure user_block is not empty
-            if user_block.nnz > 0 or not sp.issparse(user_block):
+            if user_block.nnz > 0:
                 self.similarity_matrices['user_similarity'] = user_block
-            else:
-                print("Warning: Empty user similarity matrix, skipping")
-                
+            
         if self.use_item_similarity:
-            # Item similarity submatrix
             item_block = similarity_adj[self.n_users:, self.n_users:]
-            # Ensure item_block is not empty
-            if item_block.nnz > 0 or not sp.issparse(item_block):
+            if item_block.nnz > 0:
                 self.similarity_matrices['item_similarity'] = item_block
-            else:
-                print("Warning: Empty item similarity matrix, skipping")
         
         if self.use_original_interactions:
-            # Original user-item interactions for comparison
-            # Create gram matrices from original interactions
+            # Use sparse operations for original interactions
             item_gram = self.adj_mat.T @ self.adj_mat
-            user_gram_projected = self.adj_mat.T @ (self.adj_mat @ self.adj_mat.T) @ self.adj_mat
+            # Simplify user gram computation for memory efficiency
+            user_gram_simple = self.adj_mat @ self.adj_mat.T
+            user_gram_projected = self.adj_mat.T @ user_gram_simple @ self.adj_mat
             
             self.similarity_matrices['item_gram_original'] = item_gram
             self.similarity_matrices['user_gram_original'] = user_gram_projected
-        
-        # Ensure we have at least one matrix
-        if not self.similarity_matrices:
-            print("Warning: No similarity matrices created, using original interactions")
-            item_gram = self.adj_mat.T @ self.adj_mat
-            self.similarity_matrices['item_gram_fallback'] = item_gram
         
         # Compute eigendecompositions
         self.eigendata = {}
@@ -491,7 +341,9 @@ class DySimSpectralCF(object):
             else:
                 matrix_type = 'similarity'
             
-            eigenvals, eigenvecs, n_eigen, method = self._compute_eigendecomposition(sim_matrix, matrix_type)
+            eigenvals, eigenvecs, n_eigen, method = self._compute_eigendecomposition_efficient(
+                sim_matrix, matrix_type
+            )
             
             print(f"  {name}: {method} ({n_eigen} eigenvalues)")
             
@@ -500,6 +352,7 @@ class DySimSpectralCF(object):
                 'eigenvecs': torch.tensor(eigenvecs, dtype=torch.float32, device=self.device)
             }
             
+            from model import ChebyshevFilter  # Import from your model
             self.filters[name] = ChebyshevFilter(self.filter_order).to(self.device)
         
         # Combination weights
@@ -512,11 +365,11 @@ class DySimSpectralCF(object):
             dtype=torch.float32, device=self.device
         )
         
-        print(f'DySimSpectralCF training completed in {time.time() - start:.2f}s')
+        print(f'DySimSpectralCF_Efficient training completed in {time.time() - start:.2f}s')
         print(f'Similarity matrices: {list(self.similarity_matrices.keys())}')
     
     def getUsersRating(self, batch_users, ds_name=None):
-        """Get user ratings using similarity-enhanced spectral filtering"""
+        """Efficient user rating prediction"""
         if isinstance(batch_users, np.ndarray):
             batch_users = torch.LongTensor(batch_users).to(self.device)
         
@@ -550,6 +403,5 @@ class DySimSpectralCF(object):
         return predicted.detach().cpu().numpy()
 
 
-# For backward compatibility
-UniversalSpectralCF = SimplifiedSpectralCF
-DynamicSimilaritySpectralCF = DySimSpectralCF
+# For large datasets, use the efficient version
+DySimSpectralCF_Large = DySimSpectralCF_Efficient
