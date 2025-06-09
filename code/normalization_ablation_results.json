@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "dataset": "lastfm",
+    "baseline_config": {
+      "lr": 0.05,
+      "decay": 0.0001,
+      "n_eigen_user": 15,
+      "n_eigen_item": 30,
+      "filter_order": 6
+    },
+    "runs_per_config": 1,
+    "start_time": "2025-06-09 12:44:11",
+    "total_time": 65.38181591033936,
+    "end_time": "2025-06-09 12:45:17"
+  },
+  "results": {
+    "No Normalization Only": {
+      "norm_config": {
+        "name": "No Normalization Only",
+        "type": "single",
+        "norm_type": "none",
+        "description": "Only raw adjacency matrices (no normalization)"
+      },
+      "stats": {
+        "ndcg_mean": 0.118766,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.170063,
+        "recall_std": 0.0,
+        "precision_mean": 0.04774,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 1
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.170063,
+          "precision": 0.04774,
+          "ndcg": 0.118766,
+          "norm_config": {
+            "name": "No Normalization Only",
+            "type": "single",
+            "norm_type": "none",
+            "description": "Only raw adjacency matrices (no normalization)"
+          }
+        }
+      ]
+    },
+    "Symmetric Degree Only": {
+      "norm_config": {
+        "name": "Symmetric Degree Only",
+        "type": "single",
+        "norm_type": "symmetric",
+        "description": "Only D^(-1/2) A D^(-1/2) symmetric degree normalization"
+      },
+      "stats": {
+        "ndcg_mean": 0.061127,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.099897,
+        "recall_std": 0.0,
+        "precision_mean": 0.027018,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 1
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.099897,
+          "precision": 0.027018,
+          "ndcg": 0.061127,
+          "norm_config": {
+            "name": "Symmetric Degree Only",
+            "type": "single",
+            "norm_type": "symmetric",
+            "description": "Only D^(-1/2) A D^(-1/2) symmetric degree normalization"
+          }
+        }
+      ]
+    },
+    "Softmax Only": {
+      "norm_config": {
+        "name": "Softmax Only",
+        "type": "single",
+        "norm_type": "softmax",
+        "description": "Only softmax normalization for numerical stability"
+      },
+      "stats": {
+        "ndcg_mean": 0.112945,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.162573,
+        "recall_std": 0.0,
+        "precision_mean": 0.04564,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 1
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.162573,
+          "precision": 0.04564,
+          "ndcg": 0.112945,
+          "norm_config": {
+            "name": "Softmax Only",
+            "type": "single",
+            "norm_type": "softmax",
+            "description": "Only softmax normalization for numerical stability"
+          }
+        }
+      ]
+    },
+    "No Norm + Softmax": {
+      "norm_config": {
+        "name": "No Norm + Softmax",
+        "type": "combination",
+        "norm_types": [
+          "none",
+          "softmax"
+        ],
+        "description": "Learned combination of no normalization and softmax (top 2 performers)"
+      },
+      "stats": {
+        "ndcg_mean": 0.116727,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.168394,
+        "recall_std": 0.0,
+        "precision_mean": 0.047147,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 1
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.168394,
+          "precision": 0.047147,
+          "ndcg": 0.116727,
+          "norm_config": {
+            "name": "No Norm + Softmax",
+            "type": "combination",
+            "norm_types": [
+              "none",
+              "softmax"
+            ],
+            "description": "Learned combination of no normalization and softmax (top 2 performers)"
+          }
+        }
+      ]
+    },
+    "All Three Combined": {
+      "norm_config": {
+        "name": "All Three Combined",
+        "type": "combination",
+        "norm_types": [
+          "none",
+          "symmetric",
+          "softmax"
+        ],
+        "description": "Learned combination of all three normalization types (default)"
+      },
+      "stats": {
+        "ndcg_mean": 0.107889,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.158174,
+        "recall_std": 0.0,
+        "precision_mean": 0.044107,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 1
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.158174,
+          "precision": 0.044107,
+          "ndcg": 0.107889,
+          "norm_config": {
+            "name": "All Three Combined",
+            "type": "combination",
+            "norm_types": [
+              "none",
+              "symmetric",
+              "softmax"
+            ],
+            "description": "Learned combination of all three normalization types (default)"
+          }
+        }
+      ]
+    },
+    "Symmetric + Softmax": {
+      "norm_config": {
+        "name": "Symmetric + Softmax",
+        "type": "combination",
+        "norm_types": [
+          "symmetric",
+          "softmax"
+        ],
+        "description": "Learned combination of symmetric and softmax normalization"
+      },
+      "stats": {
+        "ndcg_mean": 0.099856,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.147652,
+        "recall_std": 0.0,
+        "precision_mean": 0.041227,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 1
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.147652,
+          "precision": 0.041227,
+          "ndcg": 0.099856,
+          "norm_config": {
+            "name": "Symmetric + Softmax",
+            "type": "combination",
+            "norm_types": [
+              "symmetric",
+              "softmax"
+            ],
+            "description": "Learned combination of symmetric and softmax normalization"
+          }
+        }
+      ]
+    }
+  }
+}

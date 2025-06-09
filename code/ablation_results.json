@@ -1,0 +1,2557 @@
+{
+  "metadata": {
+    "dataset": "ml-100k",
+    "baseline_config": {
+      "lr": 0.1,
+      "decay": 0.01,
+      "n_eigen_user": 25,
+      "n_eigen_item": 40,
+      "filter_order": 6,
+      "use_user_gram": true,
+      "use_item_gram": true,
+      "user_norm": "symmetric",
+      "item_norm": "symmetric"
+    },
+    "runs_per_config": 3,
+    "studies_conducted": [
+      "gram_matrices",
+      "eigenvalues",
+      "filter_orders",
+      "spectral_vs_mf",
+      "normalization"
+    ],
+    "start_time": "2025-06-09 12:14:16",
+    "total_time": 401.66331696510315,
+    "end_time": "2025-06-09 12:20:57"
+  },
+  "Gram Matrices": {
+    "Both Gram Matrices": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.300524,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271791,
+        "recall_std": 0.0,
+        "precision_mean": 0.21691399999999997,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "User Gram Only": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": false,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.299523,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.269803,
+        "recall_std": 0.0,
+        "precision_mean": 0.21474000000000001,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.269803,
+          "precision": 0.21474,
+          "ndcg": 0.299523,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": false,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.269803,
+          "precision": 0.21474,
+          "ndcg": 0.299523,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": false,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.269803,
+          "precision": 0.21474,
+          "ndcg": 0.299523,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": false,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Item Gram Only": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": false,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.283476,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.258951,
+        "recall_std": 0.0,
+        "precision_mean": 0.209438,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.258951,
+          "precision": 0.209438,
+          "ndcg": 0.283476,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": false,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.258951,
+          "precision": 0.209438,
+          "ndcg": 0.283476,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": false,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.258951,
+          "precision": 0.209438,
+          "ndcg": 0.283476,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": false,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "No Gram Matrices": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": false,
+        "use_item_gram": false,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        }
+      ]
+    }
+  },
+  "Eigenvalue Dimensions": {
+    "Baseline": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.300524,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271791,
+        "recall_std": 0.0,
+        "precision_mean": 0.21691399999999997,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Half User Eigen": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 12,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.319911,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.28621,
+        "recall_std": 0.0,
+        "precision_mean": 0.22841999999999998,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.28621,
+          "precision": 0.22842,
+          "ndcg": 0.319911,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 12,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.28621,
+          "precision": 0.22842,
+          "ndcg": 0.319911,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 12,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.28621,
+          "precision": 0.22842,
+          "ndcg": 0.319911,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 12,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Half Item Eigen": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 20,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.309223,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.276393,
+        "recall_std": 0.0,
+        "precision_mean": 0.220626,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.276393,
+          "precision": 0.220626,
+          "ndcg": 0.309223,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 20,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.276393,
+          "precision": 0.220626,
+          "ndcg": 0.309223,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 20,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.276393,
+          "precision": 0.220626,
+          "ndcg": 0.309223,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 20,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Double User Eigen": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 50,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.284701,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.261181,
+        "recall_std": 0.0,
+        "precision_mean": 0.20975599999999997,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.261181,
+          "precision": 0.209756,
+          "ndcg": 0.284701,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 50,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.261181,
+          "precision": 0.209756,
+          "ndcg": 0.284701,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 50,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.261181,
+          "precision": 0.209756,
+          "ndcg": 0.284701,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 50,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Double Item Eigen": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 80,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.297806,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271274,
+        "recall_std": 0.0,
+        "precision_mean": 0.213521,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271274,
+          "precision": 0.213521,
+          "ndcg": 0.297806,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 80,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271274,
+          "precision": 0.213521,
+          "ndcg": 0.297806,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 80,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271274,
+          "precision": 0.213521,
+          "ndcg": 0.297806,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 80,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Minimal Eigen (10,15)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 10,
+        "n_eigen_item": 15,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.320187,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.284779,
+        "recall_std": 0.0,
+        "precision_mean": 0.22545099999999998,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.284779,
+          "precision": 0.225451,
+          "ndcg": 0.320187,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 10,
+            "n_eigen_item": 15,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.284779,
+          "precision": 0.225451,
+          "ndcg": 0.320187,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 10,
+            "n_eigen_item": 15,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.284779,
+          "precision": 0.225451,
+          "ndcg": 0.320187,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 10,
+            "n_eigen_item": 15,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Large Eigen": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 75,
+        "n_eigen_item": 120,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.24278999999999998,
+        "ndcg_std": 2.7755575615628914e-17,
+        "recall_mean": 0.227166,
+        "recall_std": 0.0,
+        "precision_mean": 0.178897,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.227166,
+          "precision": 0.178897,
+          "ndcg": 0.24279,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 75,
+            "n_eigen_item": 120,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.227166,
+          "precision": 0.178897,
+          "ndcg": 0.24279,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 75,
+            "n_eigen_item": 120,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.227166,
+          "precision": 0.178897,
+          "ndcg": 0.24279,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 75,
+            "n_eigen_item": 120,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    }
+  },
+  "Filter Orders": {
+    "Filter Order 1": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 1,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.302422,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.272849,
+        "recall_std": 0.0,
+        "precision_mean": 0.218346,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.272849,
+          "precision": 0.218346,
+          "ndcg": 0.302422,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272849,
+          "precision": 0.218346,
+          "ndcg": 0.302422,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272849,
+          "precision": 0.218346,
+          "ndcg": 0.302422,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 2": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 2,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.302464,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.272911,
+        "recall_std": 0.0,
+        "precision_mean": 0.218346,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.272911,
+          "precision": 0.218346,
+          "ndcg": 0.302464,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 2,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272911,
+          "precision": 0.218346,
+          "ndcg": 0.302464,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 2,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272911,
+          "precision": 0.218346,
+          "ndcg": 0.302464,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 2,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 3": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 3,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.301625,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.272642,
+        "recall_std": 0.0,
+        "precision_mean": 0.21792200000000003,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.272642,
+          "precision": 0.217922,
+          "ndcg": 0.301625,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 3,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272642,
+          "precision": 0.217922,
+          "ndcg": 0.301625,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 3,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272642,
+          "precision": 0.217922,
+          "ndcg": 0.301625,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 3,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 4": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 4,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.302246,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.272633,
+        "recall_std": 0.0,
+        "precision_mean": 0.21824,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.272633,
+          "precision": 0.21824,
+          "ndcg": 0.302246,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 4,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272633,
+          "precision": 0.21824,
+          "ndcg": 0.302246,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 4,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272633,
+          "precision": 0.21824,
+          "ndcg": 0.302246,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 4,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 5": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 5,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.301523,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.272556,
+        "recall_std": 0.0,
+        "precision_mean": 0.217762,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.272556,
+          "precision": 0.217762,
+          "ndcg": 0.301523,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 5,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272556,
+          "precision": 0.217762,
+          "ndcg": 0.301523,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 5,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272556,
+          "precision": 0.217762,
+          "ndcg": 0.301523,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 5,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 6": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.300524,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271791,
+        "recall_std": 0.0,
+        "precision_mean": 0.21691399999999997,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 7": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 7,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.299975,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271491,
+        "recall_std": 0.0,
+        "precision_mean": 0.216649,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271491,
+          "precision": 0.216649,
+          "ndcg": 0.299975,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 7,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271491,
+          "precision": 0.216649,
+          "ndcg": 0.299975,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 7,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271491,
+          "precision": 0.216649,
+          "ndcg": 0.299975,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 7,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 8": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 8,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.299129,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271028,
+        "recall_std": 0.0,
+        "precision_mean": 0.216013,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271028,
+          "precision": 0.216013,
+          "ndcg": 0.299129,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 8,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271028,
+          "precision": 0.216013,
+          "ndcg": 0.299129,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 8,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271028,
+          "precision": 0.216013,
+          "ndcg": 0.299129,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 8,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 10": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 10,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.29761,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.269982,
+        "recall_std": 0.0,
+        "precision_mean": 0.214952,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.269982,
+          "precision": 0.214952,
+          "ndcg": 0.29761,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 10,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.269982,
+          "precision": 0.214952,
+          "ndcg": 0.29761,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 10,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.269982,
+          "precision": 0.214952,
+          "ndcg": 0.29761,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 10,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    },
+    "Filter Order 12": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 12,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.296342,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.269748,
+        "recall_std": 0.0,
+        "precision_mean": 0.214475,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.269748,
+          "precision": 0.214475,
+          "ndcg": 0.296342,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 12,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.269748,
+          "precision": 0.214475,
+          "ndcg": 0.296342,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 12,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.269748,
+          "precision": 0.214475,
+          "ndcg": 0.296342,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 12,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ]
+    }
+  },
+  "Normalization": {
+    "Symmetric (Both)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.300524,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271791,
+        "recall_std": 0.0,
+        "precision_mean": 0.21691399999999997,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ],
+      "category": "Standard",
+      "user_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)",
+      "item_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)"
+    },
+    "Left (Both)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "left",
+        "item_norm": "left"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Standard",
+      "user_norm_desc": "D^(-1) A (left/row normalization)",
+      "item_norm_desc": "D^(-1) A (left/row normalization)"
+    },
+    "Right (Both)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "right",
+        "item_norm": "right"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Standard",
+      "user_norm_desc": "A D^(-1) (right/column normalization)",
+      "item_norm_desc": "A D^(-1) (right/column normalization)"
+    },
+    "Row (Both)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "row",
+        "item_norm": "row"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Standard",
+      "user_norm_desc": "Row-wise L1 normalization",
+      "item_norm_desc": "Row-wise L1 normalization"
+    },
+    "Col (Both)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "col",
+        "item_norm": "col"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Standard",
+      "user_norm_desc": "Column-wise L1 normalization",
+      "item_norm_desc": "Column-wise L1 normalization"
+    },
+    "No Normalization": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "none",
+        "item_norm": "none"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Standard",
+      "user_norm_desc": "Raw adjacency matrix A",
+      "item_norm_desc": "Raw adjacency matrix A"
+    },
+    "Sym User + Left Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "left"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Asymmetric",
+      "user_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)",
+      "item_norm_desc": "D^(-1) A (left/row normalization)"
+    },
+    "Left User + Sym Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "left",
+        "item_norm": "symmetric"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Asymmetric",
+      "user_norm_desc": "D^(-1) A (left/row normalization)",
+      "item_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)"
+    },
+    "Sym User + Right Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "right"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Asymmetric",
+      "user_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)",
+      "item_norm_desc": "A D^(-1) (right/column normalization)"
+    },
+    "Right User + Sym Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "right",
+        "item_norm": "symmetric"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Asymmetric",
+      "user_norm_desc": "A D^(-1) (right/column normalization)",
+      "item_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)"
+    },
+    "Row User + Col Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "row",
+        "item_norm": "col"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Asymmetric",
+      "user_norm_desc": "Row-wise L1 normalization",
+      "item_norm_desc": "Column-wise L1 normalization"
+    },
+    "Col User + Row Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "col",
+        "item_norm": "row"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Asymmetric",
+      "user_norm_desc": "Column-wise L1 normalization",
+      "item_norm_desc": "Row-wise L1 normalization"
+    },
+    "Sym User + None Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "none"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Mixed",
+      "user_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)",
+      "item_norm_desc": "Raw adjacency matrix A"
+    },
+    "None User + Sym Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "none",
+        "item_norm": "symmetric"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Mixed",
+      "user_norm_desc": "Raw adjacency matrix A",
+      "item_norm_desc": "D^(-1/2) A D^(-1/2) (symmetric normalization)"
+    },
+    "Left User + None Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "left",
+        "item_norm": "none"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Mixed",
+      "user_norm_desc": "D^(-1) A (left/row normalization)",
+      "item_norm_desc": "Raw adjacency matrix A"
+    },
+    "None User + Left Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "none",
+        "item_norm": "left"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Mixed",
+      "user_norm_desc": "Raw adjacency matrix A",
+      "item_norm_desc": "D^(-1) A (left/row normalization)"
+    },
+    "Row User + None Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "row",
+        "item_norm": "none"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Extreme",
+      "user_norm_desc": "Row-wise L1 normalization",
+      "item_norm_desc": "Raw adjacency matrix A"
+    },
+    "None User + Col Item": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "none",
+        "item_norm": "col"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (2): usage: main.py [-h] [--lr LR] [--decay DECAY]\n               [--train_u_batch_size TRAIN_U_BATCH_SIZE]\n               [--eval_u_batch_size EVAL_U_BATCH_SIZE] [--epochs EPOCHS]\n               [--datase"
+        }
+      ],
+      "category": "Extreme",
+      "user_norm_desc": "Raw adjacency matrix A",
+      "item_norm_desc": "Column-wise L1 normalization"
+    }
+  },
+  "Spectral vs MF": {
+    "Full SpectralCF": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.300524,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271791,
+        "recall_std": 0.0,
+        "precision_mean": 0.21691399999999997,
+        "precision_std": 2.7755575615628914e-17,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271791,
+          "precision": 0.216914,
+          "ndcg": 0.300524,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 6,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ],
+      "description": "Complete spectral filtering with gram matrices"
+    },
+    "No Filter (eigen only)": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 0,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.298674,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.271122,
+        "recall_std": 0.0,
+        "precision_mean": 0.215854,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.271122,
+          "precision": 0.215854,
+          "ndcg": 0.298674,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 0,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271122,
+          "precision": 0.215854,
+          "ndcg": 0.298674,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 0,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.271122,
+          "precision": 0.215854,
+          "ndcg": 0.298674,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 0,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ],
+      "description": "Only eigendecomposition, no polynomial filtering"
+    },
+    "Linear Filter": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 40,
+        "filter_order": 1,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.302422,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.272849,
+        "recall_std": 0.0,
+        "precision_mean": 0.218346,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.272849,
+          "precision": 0.218346,
+          "ndcg": 0.302422,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272849,
+          "precision": 0.218346,
+          "ndcg": 0.302422,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.272849,
+          "precision": 0.218346,
+          "ndcg": 0.302422,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 25,
+            "n_eigen_item": 40,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ],
+      "description": "Linear spectral filtering (K=1)"
+    },
+    "No User Spectral": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 0,
+        "n_eigen_item": 40,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        }
+      ],
+      "description": "Remove user spectral component entirely"
+    },
+    "No Item Spectral": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 25,
+        "n_eigen_item": 0,
+        "filter_order": 6,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": null,
+      "raw_results": [
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        },
+        {
+          "success": false,
+          "error": "Non-zero exit (1): Traceback (most recent call last):\n  File \"/Users/tseesuren/Desktop/ActiveResearch/dev/uniSpecCF/code/main.py\", line 48, in <module>\n    trained_model, final_results = procedure.train_and_evaluate(dat"
+        }
+      ],
+      "description": "Remove item spectral component entirely"
+    },
+    "Minimal Spectral": {
+      "config": {
+        "lr": 0.1,
+        "decay": 0.01,
+        "n_eigen_user": 5,
+        "n_eigen_item": 5,
+        "filter_order": 1,
+        "use_user_gram": true,
+        "use_item_gram": true,
+        "user_norm": "symmetric",
+        "item_norm": "symmetric"
+      },
+      "stats": {
+        "ndcg_mean": 0.315519,
+        "ndcg_std": 0.0,
+        "recall_mean": 0.274746,
+        "recall_std": 0.0,
+        "precision_mean": 0.219512,
+        "precision_std": 0.0,
+        "success_rate": 1.0,
+        "num_runs": 3
+      },
+      "raw_results": [
+        {
+          "success": true,
+          "recall": 0.274746,
+          "precision": 0.219512,
+          "ndcg": 0.315519,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 5,
+            "n_eigen_item": 5,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.274746,
+          "precision": 0.219512,
+          "ndcg": 0.315519,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 5,
+            "n_eigen_item": 5,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        },
+        {
+          "success": true,
+          "recall": 0.274746,
+          "precision": 0.219512,
+          "ndcg": 0.315519,
+          "config": {
+            "lr": 0.1,
+            "decay": 0.01,
+            "n_eigen_user": 5,
+            "n_eigen_item": 5,
+            "filter_order": 1,
+            "use_user_gram": true,
+            "use_item_gram": true,
+            "user_norm": "symmetric",
+            "item_norm": "symmetric"
+          }
+        }
+      ],
+      "description": "Minimal spectral components"
+    }
+  }
+}

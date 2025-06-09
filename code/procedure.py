@@ -1,5 +1,5 @@
 '''
-Fixed Training Procedure with Proper Multi-hop Combination Support
+Training Procedure for SimplifiedSpectralCF and DySimSpectralCF
 '''
 
 import world
@@ -16,53 +16,67 @@ class MSELoss:
         base_lr = config['lr']
         weight_decay = config['decay']
         
-        # Simple optimizer for spectral filter parameters
-        filter_params = list(model.spectral_filter.parameters()) + [model.combination_weights]
+        # Collect all learnable parameters from both model types
+        filter_params = []
+        for filter_module in model.filters.values():
+            filter_params.extend(list(filter_module.parameters()))
+        filter_params.append(model.combination_weights)
+        
         self.opt = torch.optim.Adam(filter_params, lr=base_lr, weight_decay=weight_decay)
     
     def train_step(self, users, target_ratings):
-        """Training step with multi-hop combination support"""
+        """Training step for both SimplifiedSpectralCF and DySimSpectralCF"""
         self.opt.zero_grad()
         
-        scores = []
-        
-        if self.model.combine_hops:
-            # Combine all hop patterns
-            for hop in range(1, self.model.n_hops + 1):
-                if hop in self.model.hop_matrices:
-                    hop_scores = self.model.hop_matrices[hop][users]
-                    scores.append(hop_scores)
-            
-            # Add filtered version of the highest hop
-            filter_response = self.model.spectral_filter(self.model.eigenvals)
-            filter_matrix = self.model.eigenvecs @ torch.diag(filter_response) @ self.model.eigenvecs.t()
-            filtered_scores = self.model.hop_matrices[self.model.n_hops][users] @ filter_matrix
-            scores.append(filtered_scores)
-            
-            # Combine with learned weights
-            weights = torch.softmax(self.model.combination_weights, dim=0)
-            predicted_ratings = sum(w * s for w, s in zip(weights, scores))
+        # Get base scores - different for each model type
+        if hasattr(self.model, 'norm_adj'):
+            # SimplifiedSpectralCF
+            base_scores = self.model.norm_adj[users]
+        elif hasattr(self.model, 'base_adj'):
+            # DySimSpectralCF
+            base_scores = self.model.base_adj[users]
         else:
-            # Original approach: base + filtered
-            base_scores = self.model.hop_matrices[self.model.n_hops][users]
-            scores.append(base_scores)
+            raise AttributeError("Model must have either norm_adj or base_adj")
+        
+        all_filtered_scores = []
+        
+        # Apply each matrix with its filter - works for both model types
+        for name, eigen_data in self.model.eigendata.items():
+            eigenvals = eigen_data['eigenvals']
+            eigenvecs = eigen_data['eigenvecs']
             
-            # Filtered scores
-            filter_response = self.model.spectral_filter(self.model.eigenvals)
-            filter_matrix = self.model.eigenvecs @ torch.diag(filter_response) @ self.model.eigenvecs.t()
-            filtered_scores = base_scores @ filter_matrix
-            scores.append(filtered_scores)
+            # Apply Chebyshev filter
+            filter_response = self.model.filters[name](eigenvals)
+            filter_matrix = eigenvecs @ torch.diag(filter_response) @ eigenvecs.t()
             
-            # Combine with learned weights
+            # Apply filtering - different logic for DySimSpectralCF
+            if hasattr(self.model, 'similarity_matrices') and 'user' in name and 'original' not in name:
+                # DySimSpectralCF user similarity: filter users then project to items
+                user_embeddings = torch.eye(self.model.n_users, device=self.model.device)[users]
+                filtered_users = user_embeddings @ filter_matrix
+                filtered_scores = filtered_users @ self.model.base_adj
+            else:
+                # SimplifiedSpectralCF or DySimSpectralCF item similarity/original matrices
+                filtered_scores = base_scores @ filter_matrix
+            
+            all_filtered_scores.append(filtered_scores)
+        
+        # Combine with learned weights
+        if len(all_filtered_scores) > 1:
             weights = torch.softmax(self.model.combination_weights, dim=0)
-            predicted_ratings = weights[0] * scores[0] + weights[1] * scores[1]
+            predicted_ratings = sum(w * s for w, s in zip(weights, all_filtered_scores))
+        else:
+            predicted_ratings = all_filtered_scores[0]
         
         loss = torch.mean((predicted_ratings - target_ratings) ** 2)
         loss.backward()
         
         # Gradient clipping
-        filter_params = list(self.model.spectral_filter.parameters()) + [self.model.combination_weights]
-        torch.nn.utils.clip_grad_norm_(filter_params, max_norm=1.0)
+        all_params = []
+        for filter_module in self.model.filters.values():
+            all_params.extend(list(filter_module.parameters()))
+        all_params.append(self.model.combination_weights)
+        torch.nn.utils.clip_grad_norm_(all_params, max_norm=1.0)
         
         self.opt.step()
         return loss.cpu().item()
@@ -188,16 +202,26 @@ def compute_metrics(ground_truth, predictions):
 
 
 def train_and_evaluate(dataset, model, config):
-    """Complete training pipeline"""
-    print("Starting training...")
+    """Complete training pipeline for both SimplifiedSpectralCF and DySimSpectralCF"""
     
-    # Debug: Print model configuration
-    if hasattr(model, 'combine_hops') and model.combine_hops:
-        print(f"DEBUG: Using hop combination with {len(model.combination_weights)} components")
-        print(f"DEBUG: Initial combination weights: {model.combination_weights.data}")
+    # Determine model type for appropriate messaging
+    if hasattr(model, 'similarity_matrices'):
+        model_name = "DySimSpectralCF"
+        matrix_dict = model.similarity_matrices
+    elif hasattr(model, 'gram_matrices'):
+        model_name = "SimplifiedSpectralCF"
+        matrix_dict = model.gram_matrices
     else:
-        print(f"DEBUG: Using single hop ({model.n_hops}) with filtering")
-        print(f"DEBUG: Initial combination weights: {model.combination_weights.data}")
+        model_name = "Unknown Model"
+        matrix_dict = {}
+    
+    print(f"Starting {model_name} training...")
+    
+    # Print model configuration
+    if matrix_dict:
+        print(f"Matrices: {list(matrix_dict.keys())}")
+    if hasattr(model, 'combination_weights'):
+        print(f"Initial combination weights: {model.combination_weights.data}")
     
     # Check validation
     has_validation = hasattr(dataset, 'valDict') and len(dataset.valDict) > 0
@@ -221,10 +245,10 @@ def train_and_evaluate(dataset, model, config):
             results = evaluate(dataset, model, eval_data, config)
             current_ndcg = results['ndcg'][0]
             
-            # Debug: Print learned weights occasionally
+            # Print learned weights occasionally
             if (epoch + 1) % (eval_every * 2) == 0:
                 weights = torch.softmax(model.combination_weights, dim=0)
-                print(f"DEBUG: Learned weights at epoch {epoch+1}: {weights.data}")
+                print(f"Learned weights at epoch {epoch+1}: {weights.data}")
             
             if current_ndcg > best_ndcg:
                 best_ndcg = current_ndcg
